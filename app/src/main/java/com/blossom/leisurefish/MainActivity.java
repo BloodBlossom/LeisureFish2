@@ -1,10 +1,14 @@
 package com.blossom.leisurefish;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.util.LogPrinter;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,12 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import beans.Feed;
 import beans.FeedResponse;
+import beans.PostVideoResponse;
 import network.Service;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,22 +40,33 @@ public class MainActivity extends AppCompatActivity
 
     RecyclerView recyclerView;
     MyAdapter adapter;
-    List<Feed> mFeeds;
+    public List<Feed> mFeeds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+       fetchFeed();
+        int permission_0 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission_1 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.INTERNET);
+        int permission_2 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.ACCESS_NETWORK_STATE);
+        if(permission_0 != PackageManager.PERMISSION_GRANTED
+                || permission_1 != PackageManager.PERMISSION_GRANTED
+                || permission_2 != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this , new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    , android.Manifest.permission.INTERNET
+                    , android.Manifest.permission.ACCESS_NETWORK_STATE},1);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         recyclerView = findViewById(R.id.recylerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter = new MyAdapter());
-
-        adapter.replaceAll();
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +84,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Log.d("Test","1");
+
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -124,12 +148,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void fetchFeed(View view) throws IOException {
+
+    public void fetchFeed(){
 
         getResponse(new Callback<FeedResponse>() {
-            @Override public void onResponse(Call<FeedResponse> call, Response<FeedResponse> response){
-                mFeeds = response.body().getFeedList();
-                recyclerView.getAdapter().notifyDataSetChanged();
+            @Override public void onResponse(Call<FeedResponse> call, final Response<FeedResponse> response){
+                if (recyclerView  != null ) {
+                    recyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mFeeds = response.body().getFeedList();
+                            adapter.replaceAll(mFeeds);
+                            recyclerView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
+                }
+
 
             }
             @Override public void onFailure(Call<FeedResponse> call, Throwable t) {
@@ -149,4 +183,5 @@ public class MainActivity extends AppCompatActivity
         retrofit.create(Service.class).getFeed().
                 enqueue(callback);
     }
+
 }
