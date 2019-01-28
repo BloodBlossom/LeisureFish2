@@ -48,8 +48,6 @@ public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletio
 
     private Intent intent;
 
-    private String id_header;
-    private String name_header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

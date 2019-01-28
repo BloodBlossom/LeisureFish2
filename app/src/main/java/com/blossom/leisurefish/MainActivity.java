@@ -1,5 +1,7 @@
 package com.blossom.leisurefish;
 
+import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,7 +26,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import beans.Feed;
 import beans.FeedResponse;
@@ -53,12 +54,21 @@ public class MainActivity extends AppCompatActivity
         int permission_0 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permission_1 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.INTERNET);
         int permission_2 = ContextCompat.checkSelfPermission(getApplication(), android.Manifest.permission.ACCESS_NETWORK_STATE);
+        int permission_3 = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.RECORD_AUDIO);
+        int permission_4 = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA);
         if(permission_0 != PackageManager.PERMISSION_GRANTED
                 || permission_1 != PackageManager.PERMISSION_GRANTED
-                || permission_2 != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this , new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                || permission_2 != PackageManager.PERMISSION_GRANTED
+                || permission_3 != PackageManager.PERMISSION_GRANTED
+                || permission_4 != PackageManager.PERMISSION_GRANTED
+        ){
+            ActivityCompat.requestPermissions(this , new String[]{
+                      android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                     , android.Manifest.permission.INTERNET
-                    , android.Manifest.permission.ACCESS_NETWORK_STATE},1);
+                    , android.Manifest.permission.ACCESS_NETWORK_STATE
+                    , android.Manifest.permission.RECORD_AUDIO
+                    , android.Manifest.permission.CAMERA
+            },1);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,14 +81,18 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter = new MyAdapter());
 
-        /**
-         *  plus.setOnClickListener(new View.OnClickListener() {
-         *             @Override
-         *             public void onClick(View view) {
-         *                 //TODO 点击进入录制页面
-         *             }
-         *         });
-         */
+
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+                      public void onClick(View view) {
+                try {
+                    startActivity(new Intent(MainActivity.this, CameraActivity.class));
+                }catch (Exception e)
+                {
+                    Toast.makeText(MainActivity.this,"Click failed",Toast.LENGTH_LONG).show();
+                }
+                      }
+                  });
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -104,48 +118,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
