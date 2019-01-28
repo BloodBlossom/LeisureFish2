@@ -22,16 +22,22 @@
 
     <include layout="@layout/content_main" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <ImageButton
+        android:background="?android:attr/selectableItemBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/heart_gray"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="10dp"/>
+
+    <ImageButton
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/plus_square"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="8dp"
-        app:backgroundTint="@android:color/background_light"
-        app:srcCompat="@drawable/plus_circle"
-        app:useCompatPadding="false"
-        android:scaleType="center"
-        app:elevation="0dp"/>
+        android:scaleType="centerCrop"/>
 
 </android.support.design.widget.CoordinatorLayout>

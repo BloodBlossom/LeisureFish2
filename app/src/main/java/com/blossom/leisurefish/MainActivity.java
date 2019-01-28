@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.ActivityCompat;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     RecyclerView recyclerView;
     MyAdapter adapter;
     public List<Feed> mFeeds;
+    ImageButton plus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,25 +70,25 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter = new MyAdapter());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO 点击进入录制页面
-            }
-        });
+        /**
+         *  plus.setOnClickListener(new View.OnClickListener() {
+         *             @Override
+         *             public void onClick(View view) {
+         *                 //TODO 点击进入录制页面
+         *             }
+         *         });
+         */
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        /**
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+        */
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        Log.d("Test","1");
-
 
     }
 
@@ -183,5 +185,6 @@ public class MainActivity extends AppCompatActivity
         retrofit.create(Service.class).getFeed().
                 enqueue(callback);
     }
+
 
 }
