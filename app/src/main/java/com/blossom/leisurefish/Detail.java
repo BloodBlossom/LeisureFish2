@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
@@ -46,6 +47,9 @@ public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletio
     private boolean isStopUpdatingProgress = false;
 
     private Intent intent;
+
+    private String id_header;
+    private String name_header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +108,9 @@ public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletio
         });
 
         intent = getIntent();
-
-        user_id.setText(intent.getStringExtra("USER_ID"));
-        user_name.setText(intent.getStringExtra("USER_NAME"));
+        user_id.setText(user_id.getText().toString() + intent.getStringExtra( "USER_ID"));
+        user_name.setText(user_name.getText().toString() +
+                intent.getStringExtra(user_name.getText().toString() + "USER_NAME"));
 
 
     }
@@ -118,6 +122,7 @@ public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletio
             state = PLAYING;
             return;
         }
+        isStopUpdatingProgress = false;
         play();
     }
 
@@ -138,6 +143,9 @@ public class Detail extends AppCompatActivity implements MediaPlayer.OnCompletio
 
             state = PLAYING;
 
+            int duration = mediaPlayer.getDuration();
+            seekBar.setMax(duration);
+            seekBar.setEnabled(false);
             isStopUpdatingProgress = false;
             new Thread(new UpdateProgressRunnable()).start();
         } catch (IOException e) {
